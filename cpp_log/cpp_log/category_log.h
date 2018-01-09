@@ -17,7 +17,7 @@ inline std::string ToString(const std::string& a)
 {
 	return a;
 }
-std::string ToString(const char* a)
+inline std::string ToString(const char* a)
 {
 	return std::string(a);
 }
