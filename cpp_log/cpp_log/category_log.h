@@ -22,7 +22,28 @@ inline std::string ToString(const char* a)
 	return std::string(a);
 }
 
-// 日志流
+/************************************************************************/
+/* ini 配置日志分级                                                     */
+/************************************************************************/
+class CategoryLogConfig
+{
+public:
+	static void Register(const char* clsName, void(*setLogCallback)(int));
+	static void SetLogLevel(const char* clsName, int logLevel);
+};
+template<class T>
+class CategoryLogConfigAutoRegister
+{
+public:
+	CategoryLogConfigAutoRegister()
+	{
+		CategoryLogConfig::Register(T::GetTag(), T::SetLogLevel);
+	}
+};
+
+/************************************************************************/
+/* 日志流			                                                    */
+/************************************************************************/
 template<int StaticLogLevel>
 class LogArchive
 {
@@ -105,12 +126,18 @@ public:
 	{}
 };
 
-// 通用的分类日志
+/************************************************************************/
+/* 通用的分类日志。                                                     */
+/************************************************************************/
 template<class T>
 class TCategoryLog
 {
 public:
-	static void SetLogLevel(ELogLevel logLevel)
+	static const char* GetTag()
+	{
+		return tag;
+	}
+	static void SetLogLevel(int logLevel)
 	{
 		LogLevel = logLevel;
 	}
@@ -137,9 +164,10 @@ public:
 private:
 	static int LogLevel;
 	static const char* tag;
+	static CategoryLogConfigAutoRegister<T> AutoReg;
 };
 
-// 宏声明的办法
+// 宏声明的办法。
 #pragma region DECLARE_IMPL_LOG
 
 #define DECLARE_LOG(class_name) \
@@ -149,7 +177,8 @@ private:
 
 #define IMPLEMENT_LOG(class_name, log_level) \
 	int TCategoryLog<class_name>::LogLevel = log_level; \
-	const char* TCategoryLog<class_name>::tag = #class_name;
+	const char* TCategoryLog<class_name>::tag = #class_name; \
+	CategoryLogConfigAutoRegister<class_name> TCategoryLog<class_name>::AutoReg;
 
 #define DECLARE_IMPL_LOG(class_name, log_level) \
 	DECLARE_LOG(class_name) \
