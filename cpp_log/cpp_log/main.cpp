@@ -1,6 +1,7 @@
 // cpp_log.cpp: 定义控制台应用程序的入口点。
 //
 #include "category_log.h"
+#include "var_args.h"
 
 static void SetLogLevel(int logLevel)
 {
@@ -60,6 +61,8 @@ int main()
 	TestLog2::warn() << 1 << "1.0" << 1.0f << ExampleClassA();
 	TestLog2::err() << 1 << "1.0" << 1.0f << ExampleClassA();
 	TestLog2::fatal() << 1 << "1.0" << 1.0f << ExampleClassA();
+
+	std::cout << printf("%s,%s,%d", "a", 1, 2.0f) << std::endl;
 
 	return 0;
 }

@@ -2,25 +2,8 @@
 #ifndef _CATEGORY_LOG_H_
 #define _CATEGORY_LOG_H_
 
-
 #include <iostream>
-#include <string>
-
-// 通用的转为string的函数
-template<class T>
-inline std::string ToString(const T& a)
-{
-	return std::to_string(a);
-}
-template<>
-inline std::string ToString(const std::string& a)
-{
-	return a;
-}
-inline std::string ToString(const char* a)
-{
-	return std::string(a);
-}
+#include "string_util.h"
 
 /************************************************************************/
 /* ini 配置日志分级                                                     */
@@ -44,6 +27,7 @@ public:
 /************************************************************************/
 /* 日志流			                                                    */
 /************************************************************************/
+extern void CategoryLogOutput(const char*, const char* classTag, const char* logTag, const char* content);
 template<int StaticLogLevel>
 class LogArchive
 {
@@ -58,7 +42,7 @@ public:
 		// 如果日志等级比环境等级高，那么就打印日志。
 		if (StaticLogLevel >= EnvLogLevel)
 		{
-			std::cout << "[" << ClassTag << "][" << LogTag << "]" << str.c_str() << std::endl;
+			CategoryLogOutput(" [%s][%s]: %s", ClassTag, LogTag, str.c_str());
 		}
 		// std::cout << Tag << "~StringArchive()" << std::endl;
 	}
@@ -70,11 +54,6 @@ public:
 			str += ToString(a);
 		}
 		return *this;
-	}
-
-	static void Delete(LogArchive* ptr)
-	{
-		delete ptr;
 	}
 
 private:
@@ -176,9 +155,9 @@ private:
 	};
 
 #define IMPLEMENT_LOG(class_name, log_level) \
-	int TCategoryLog<class_name>::LogLevel = log_level; \
-	const char* TCategoryLog<class_name>::tag = #class_name; \
-	CategoryLogConfigAutoRegister<class_name> TCategoryLog<class_name>::AutoReg;
+	template<> int TCategoryLog<class_name>::LogLevel = log_level; \
+	template<> const char* TCategoryLog<class_name>::tag = #class_name; \
+	template<> CategoryLogConfigAutoRegister<class_name> TCategoryLog<class_name>::AutoReg;
 
 #define DECLARE_IMPL_LOG(class_name, log_level) \
 	DECLARE_LOG(class_name) \

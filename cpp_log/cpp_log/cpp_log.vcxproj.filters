@@ -18,12 +18,21 @@
     <ClInclude Include="category_log.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="var_args.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="string_util.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="category_log.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="var_args.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
